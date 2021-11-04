@@ -281,7 +281,7 @@ input::-webkit-inner-spin-button {
 		}
 		div.list {
 			display: none;
-			overflow-y: auto;
+			
 			position: absolute;
 			z-index: 999999999;
 			left:0px;
@@ -291,9 +291,21 @@ input::-webkit-inner-spin-button {
 			background-color: #2b2f36;
 			margin-bottom: 5px;
 			margin-top: 0px;
-			max-height: 200px;
 			box-shadow: 0 7px 7px 1px #1e2026;
-			
+
+			.search {
+				display: flex;
+				background-color: #2b2f36;
+				padding: 5px 10px;
+				input {
+					width: 100%;
+					border: none;
+					outline: none;
+					background-color: transparent;
+					color: white;
+					padding: 5px;
+				}
+			}
 			ul {
 				list-style: none;
 				margin: 0;
@@ -313,17 +325,7 @@ input::-webkit-inner-spin-button {
 						img {opacity: 0.3;}
 						span {color: #888;}
 					}
-					&.search {
-						background-color: #2b2f36;
-						input {
-							width: 100%;
-							border: none;
-							outline: none;
-							background-color: transparent;
-							color: white;
-							padding: 5px;
-						}
-					}
+					
 					
 					span {
 						width: 4em;
