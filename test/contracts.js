@@ -16,7 +16,7 @@ var owner;
 var userWallet;
 
 describe("Create UserWallet", function () {
-  it("Create account", async function () {
+	it("Create account", async function () {
 	userWallet = ethers.Wallet.createRandom();
 	[owner] = await ethers.getSigners();
 	});
@@ -24,24 +24,24 @@ describe("Create UserWallet", function () {
 
 describe("Exchange deploy and deploy", function () {
 
-  it("Factory deploy", async function () {
-    const Factory = await ethers.getContractFactory("PancakeswapFactory");
-    exchangeFactory = await Factory.deploy(owner.address);
-    await exchangeFactory.deployed();
-	console.log(await exchangeFactory.INIT_CODE_PAIR_HASH())
-  });
+	it("Factory deploy", async function () {
+		const Factory = await ethers.getContractFactory("PancakeswapFactory");
+		exchangeFactory = await Factory.deploy(owner.address);
+		await exchangeFactory.deployed();
+		console.log(await exchangeFactory.INIT_CODE_PAIR_HASH())
+	});
 
-  it("WETH deploy", async function () {
-    const WETH = await ethers.getContractFactory("WETH9");
-    wETH = await WETH.deploy();
-    await wETH.deployed();
-  });
-  
-  it("Router deploy", async function () {
-    const Router = await ethers.getContractFactory("PancakeswapRouter");
-    exchangeRouter = await Router.deploy(exchangeFactory.address,wETH.address);
-    await exchangeRouter.deployed();
-  });
+	it("WETH deploy", async function () {
+		const WETH = await ethers.getContractFactory("WETH9");
+		wETH = await WETH.deploy();
+		await wETH.deployed();
+	});
+	
+	it("Router deploy", async function () {
+		const Router = await ethers.getContractFactory("PancakeswapRouter");
+		exchangeRouter = await Router.deploy(exchangeFactory.address,wETH.address);
+		await exchangeRouter.deployed();
+	});
 
 });
 
@@ -58,10 +58,10 @@ describe("Token contract deploy", function () {
 		const DMToken = await ethers.getContractFactory("DMToken");
 		dMToken = await DMToken.deploy();
 
-        const Store = await ethers.getContractFactory("Store");
-        const store = await Store.deploy();
+				const Store = await ethers.getContractFactory("Store");
+				const store = await Store.deploy();
 
-        await store.deployed();
+				await store.deployed();
 
 		store.transferOwnership(dMToken.address);
 
@@ -79,7 +79,7 @@ describe("Token contract deploy", function () {
 
 	});
 
-  	it("DM Add Liquidity", async function () {
+		it("DM Add Liquidity", async function () {
 		var tx = await dMToken.approve(exchangeRouter.address,ethers.utils.parseUnits("100000000",18));
 		await tx.wait();
 		tx = await usdt.approve(exchangeRouter.address,ethers.utils.parseUnits("10000000",6));

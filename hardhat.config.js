@@ -24,7 +24,11 @@ module.exports = {
 			url: "http://127.0.0.1:8545"
 		},
 		ganache :{
-			url: "http://127.0.0.1:7545",
+			url: "http://192.168.115.160:7545",
+			accounts: [process.env.PRIVATEKEY]
+		},
+		icicblocaltest :{
+			url: "http://192.168.115.160:5050",
 			accounts: [process.env.PRIVATEKEY]
 		},
 		
@@ -44,7 +48,7 @@ module.exports = {
 			url: "https://rpc.testnet.fantom.network",
 			accounts: [process.env.PRIVATEKEY]
 		},
-		ethereum :{
+		eth :{
 			url: "https://main-light.eth.linkpool.io/",
 			accounts: [process.env.PRIVATEKEY]
 		},

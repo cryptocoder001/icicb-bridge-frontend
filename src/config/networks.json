@@ -1,171 +1,19 @@
 {
+    "ICICB": {
+        "bridge": "0x0c4AE8D658C65Fb53045aD8B303B3D48B109Eb60",
+        "wicicb": "0x09217BD32382EE93609A4bD167093097fa8e94F8",
+        "chainId": 417,
+        "decimals": 18,
+        "rpc": "http://192.168.115.160:5050",
+        "explorer": "http://192.168.115.160:5050",
+        "erc20": "IRC20"
+    },
     "ETH": {
-        "title": "Ethereum Network",
-        "tokens": {
-            "WBTC": {
-                "coin": "WBTC",
-                "label": "ERC20",
-                "contract": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
-                "precision": 8,
-                "min": 0.001,
-                "fee": 0.0004
-            },
-            "USDT": {
-                "coin": "USDT",
-                "label": "ERC20",
-                "contract": "0xdac17f958d2ee523a2206206994597c13d831ec7",
-                "precision": 6,
-                "min": 40,
-                "fee": 20
-            },
-            "USDC": {
-                "coin": "USDC",
-                "label": "ERC20",
-                "contract": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-                "precision": 6,
-                "min": 40,
-                "fee": 20
-            },
-            "LINK": {
-                "coin": "LINK",
-                "label": "ERC20",
-                "contract": "0x514910771af9ca656af840dff83e8264ecf986ca",
-                "precision": 6,
-                "min": 2,
-                "fee": 0.8
-            },
-            "DAI": {
-                "coin": "DAI",
-                "label": "ERC20",
-                "contract": "0x6b175474e89094c44da98b954eedeac495271d0f",
-                "precision": 6,
-                "min": 20,
-                "fee": 1
-            },
-            "BUSD": {
-                "coin": "BUSD",
-                "label": "ERC20",
-                "contract": "0x4fabb145d64652a948d72533023f6e7a623c7c53",
-                "precision": 6,
-                "min": 40,
-                "fee": 20
-            }
-        }
-    },
-    "BSC": {
-        "title": "Binance Smart Chain",
-        "tokens": {
-            "BTC": {
-                "coin": "BTCB",
-                "label": "BEP20",
-                "contract": "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
-                "precision": 8,
-                "min": 0.0001,
-                "fee": 0.00001
-            },
-            "ETH": {
-                "coin": "ETHB",
-                "label": "BEP20",
-                "contract": "0x2170ed0880ac9a755fd29b2688956bd959f933f8",
-                "precision": 6,
-                "min": 0.005,
-                "fee": 0.0002
-            },
-            "USDT": {
-                "coin": "BUSD-T",
-                "label": "BEP20",
-                "contract": "0x55d398326f99059ff775485246999027b3197955",
-                "precision": 8,
-                "min": 1,
-                "fee": 10
-            },
-            "LTC": {
-                "coin": "LTCB",
-                "label": "BEP20",
-                "contract": "0x4338665cbb7b2485a8855a139b75d5e34ab0db94",
-                "precision": 8,
-                "min": 0.01,
-                "fee": 0.001
-            },
-            "BCH": {
-                "coin": "BCH",
-                "label": "BEP20",
-                "contract": "0x8ff795a6f4d97e7887c79bea79aba5cc76444adf",
-                "precision": 8,
-                "min": 0.001,
-                "fee": 0.0003
-            },
-            "ZEC": {
-                "coin": "ZEC",
-                "label": "BEP20",
-                "contract": "0x1ba42e5193dfa8b03d15dd1b86a3113bbbef8eeb",
-                "precision": 8,
-                "min": 0.01,
-                "fee": 0.001
-            },
-            "EOS": {
-                "coin": "EOS",
-                "label": "BEP20",
-                "contract": "0x56b6fb708fc5732dec1afc8d8556423a2edccbd6",
-                "precision": 8,
-                "min": 0.1,
-                "fee": 0.05
-            },
-            "XRP": {
-                "coin": "XRP",
-                "label": "BEP20",
-                "contract": "0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe",
-                "precision": 8,
-                "min": 1,
-                "fee": 0.5
-            },
-            "DOT": {
-                "coin": "DOT",
-                "label": "BEP20",
-                "contract": "0x7083609fce4d1d8dc0c979aab8c869ea2c873402",
-                "precision": 6,
-                "min": 0.02,
-                "fee": 0.008
-            },
-            "ATOM": {
-                "coin": "ATOM",
-                "label": "BEP20",
-                "contract": "0x0eb3a705fc54725037cc9e008bdede697f62f335",
-                "precision": 6,
-                "min": 0.1,
-                "fee": 0.02
-            },
-            "DOGE": {
-                "coin": "DOGE",
-                "label": "BEP20",
-                "contract": "0xba2ae424d960c26247dd6c32edc70b295c744c43",
-                "precision": 8,
-                "min": 10,
-                "fee": 1
-            }
-        }
-    },
-    "TRX": {
-        "title": "Tron Network",
-        "disabled": true,
-        "tokens": {
-            "USDT": {
-                "coin": "USDT",
-                "label": "TRC20",
-                "contract": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-                "precision": 6,
-                "min": 10,
-                "fee": 1
-            }
-        }
-    },
-    "HT": {
-        "title": "Huobi ecosystem",
-        "disabled": true,
-        "tokens": [
-            
-        ]
+        "rpc": "http://192.168.115.160:7545",
+        "bridge": "0x11eA0CCf5Be0B7718E352AA8c3D964135d13eDCc",
+        "chainId": 1337,
+        "decimals": 18,
+        "explorer": "http://192.168.115.160:5050",
+        "erc20": "ERC20"
     }
 }
-
-  

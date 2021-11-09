@@ -1,5 +1,5 @@
-//SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.6.12;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
 contract WICICB {
     string public name     = "Wrapped ICICB";
@@ -25,10 +25,10 @@ contract WICICB {
         balanceOf[msg.sender] += msg.value;
         emit Deposit(msg.sender, msg.value);
     }
-    function withdraw(uint wad) public {
+    function withdraw(uint wad) public payable {
         require(balanceOf[msg.sender] >= wad);
         balanceOf[msg.sender] -= wad;
-        msg.sender.transfer(wad);
+        payable(msg.sender).transfer(wad);
         emit Withdrawal(msg.sender, wad);
     }
 
@@ -49,7 +49,7 @@ contract WICICB {
     function transferFrom(address src, address dst, uint wad) public returns (bool) {
         require(balanceOf[src] >= wad);
 
-        if (src != msg.sender && allowance[src][msg.sender] != uint(-1)) {
+        if (src != msg.sender && allowance[src][msg.sender] != type(uint).max) {
             require(allowance[src][msg.sender] >= wad);
             allowance[src][msg.sender] -= wad;
         }
@@ -57,7 +57,7 @@ contract WICICB {
         balanceOf[src] -= wad;
         balanceOf[dst] += wad;
 
-        Transfer(src, dst, wad);
+        emit Transfer(src, dst, wad);
 
         return true;
     }
