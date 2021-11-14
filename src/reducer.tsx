@@ -7,12 +7,15 @@ const locales = {
 };
 
 const lang = window.localStorage.getItem('lang') || 'en-US';
-
 const DEFAULT_NET = 'ETH'
+
+const chainIds = {};
+Object.keys(networks).map(k=>chainIds[networks[k].chainId] = k);
+
 const initial:WalletTypes = {
+	chainIds,
 	chainId:networks[DEFAULT_NET].chainId,
     rpc:networks[DEFAULT_NET].rpc,
-
     status: 'disconnected',
 	address: '',
 	checking: false,
@@ -20,28 +23,34 @@ const initial:WalletTypes = {
     err:'',
 }
 
-const tokens:TokenTypes = {}
+/* const tokens:TokenTypes = {}
 for(let k in networks) {
-	tokens[k] = {
+	tokens[networks[k].coin] = {
 		'-' : {
 			symbol: k,
 			decimals: networks[k].decimals
 		}
 	}
+} */
+const coins:CoinTypes = {}
+for(let k in networks) {
+	coins[networks[k].coin] = {[k]:{address:'-', decimals:networks[k].decimals}}
 }
 
 const initialState: BridgeTypes = {
 	lang,
     L: locales[lang],
 
-	tokens, 
+	/* tokens,  */
+	coins, 
 	loading: false,
 	inited: false,
 	pending:{},
+	txs:{},
 	...initial,
 	chain: 'ETH',
 	targetChain: 'ICICB',
-	token: '-',
+	token: 'ETH',
 	value: '',
 }
 

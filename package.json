@@ -39,21 +39,25 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "testui": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy_test": "npx hardhat test",
+    
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
 
     "deploy_fantomtest": "npx hardhat run --network fantomtestnet scripts/deploy.js",
-    "deploy_bsctest": "npx hardhat run --network bsctestnet scripts/deploy.js",
-    "deploy_eth": "npx hardhat run --network eth scripts/deploy.js",
-    "deploy_bsc": "npx hardhat run --network bsc scripts/deploy.js",
+    
+    "deploy_eth": "npx hardhat run --network eth scripts/deploy-eth.js",
+    "deploy_bsc": "npx hardhat run --network bsc scripts/deploy-bsc.js",
+    "deploy_icicb": "npx hardhat run --network icicb scripts/deploy.js",
 
-    "deploy_eth_tokens": "npx hardhat run --network ganache scripts/deploy-eth_tokens.js",
-    "deploy_bsc_tokens": "npx hardhat run --network deploy_bsctest scripts/deploy-bsc_tokens.js",
+    "deploy_eth_tokens": "npx hardhat run --network ethtest scripts/deploy-eth_tokens.js",
+    "deploy_bsc_tokens": "npx hardhat run --network bsctestnet scripts/deploy-bsc_tokens.js",
 
-    "deploy_core": "npx hardhat run --network icicb scripts/deploy.js",
-    "deploy_local_eth": "npx hardhat run --network ganache scripts/deploy-eth.js",
-    "deploy_local": "npx hardhat run --network icicblocaltest scripts/deploy.js && npx hardhat run --network ganache scripts/deploy-eth.js"
+    "deploy_icicbtest": "npx hardhat run --network icicbtestnet scripts/deploy.js",
+    "deploy_bsctest": "npx hardhat run --network bsctestnet scripts/deploy-bsc.js",
+    "deploy_ethtest": "npx hardhat run --network ethtest scripts/deploy-eth.js",
+    "deploy_testall": "npx hardhat run --network icicbtestnet scripts/deploy.js && npx hardhat run --network ethtest scripts/deploy-eth.js && npx hardhat run --network bsctestnet scripts/deploy-bsc.js && npx hardhat run --network ethtest scripts/deploy-eth_tokens.js && npx hardhat run --network bsctestnet scripts/deploy-bsc_tokens.js"
   },
   "eslintConfig": {
     "extends": [

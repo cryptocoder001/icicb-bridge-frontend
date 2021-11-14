@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+export const getApiUrl = (uri) => process.env.REACT_APP_ENDPOINT + uri;
 
 export const errHandler = (err:any) => {
 	if (err) {

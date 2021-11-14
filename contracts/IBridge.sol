@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 interface IBridge {
-    event Deposit (address from,   address token, uint amount, uint targetChain);
-    event Transfer(uint fromChain, address fromToken, address token, address to, uint amount);
+    event Deposit      (address token, address from, uint amount, uint targetChain);
+    
+    function addToken(address[] memory _tokens) external;
+    function createToken(string[] memory names, string[] memory symbols, uint8[] memory decimals) external;
 
     function deposit(address token, uint amount, uint targetChain) external payable;
-    function transfer(uint chainId, address originalToken, address to, address token, uint amount, uint timestamp, bytes memory signature) external payable;
-
-    /* function emergencyWithdraw(address _token, uint _timestamp, bytes memory _signature) external payable; */
+    function transfer(uint[][] memory args) external payable;
 }

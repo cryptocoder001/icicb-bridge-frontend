@@ -1,8 +1,5 @@
 require('colors');
 const fs = require('fs');
-const networks = require("../src/config/networks.json");
-/* const abiBridge = require("../artifacts/contracts/Bridge.sol/Bridge.json"); */
-
 const hre = require("hardhat");
 
 async function main() {
@@ -12,20 +9,26 @@ async function main() {
 		'BTC',
 		'ETH',
 		'USDT',
+		'USDC',
 		'LTC',
 		'BCH',
-		'ZEC',
-		'EOS',
+		/* 'ZEC', */
 		'XRP',
-		'DOT',
-		'ATOM',
-		'DOGE'
+		'DOGE',
+		'LINK'
+		/* 'DOT',
+		'EOS',
+		'ATOM' */
 	];
 	const deployTokens = await DeployTokens.deploy(tokens, signer.address);
 	const addrs = await deployTokens.getTokens();
+	console.log('BSC tokens');
+	let ts = [['BSC', '-', 'BNB']];
 	for(let i=0; i<addrs.length; i++) {
-		console.log(tokens[i].blue, addrs[i].green);
+		console.log('\t' + tokens[i].blue + '\t' + addrs[i].green);
+		ts.push(['BSC', addrs[i], tokens[i]])
 	}
+	fs.appendFileSync(`./coins.csv`, ts.map(v=>v.join('\t')).join('\t\n') + '\t\n');
 }
 
 main().then(() => {

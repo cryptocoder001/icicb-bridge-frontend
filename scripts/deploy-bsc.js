@@ -6,26 +6,25 @@ const networks = require("../src/config/networks.json");
 const hre = require("hardhat");
 
 async function main() {
-	const netId = "ETH"
+	const netId = "BSC"
 	const decimals = 18
 	const admin = "0xC5df89579D7A2f85b8a4b1a6395083da394Bba92";
 
 	const signer = await hre.ethers.getSigner();
 	const network = await signer.provider._networkPromise;
-	const rpc = 'https://rinkeby.infura.io/v3/580d6de4d2694cbdbee111d2f553dbcc'; // signer.provider.connection.url;
-	const explorer = 'https://rinkeby.etherscan.io/'; // signer.provider.connection.url;
+	const rpc = 'https://ethereum-rpc.icicbchain.org/bsctest/'; // signer.provider.connection.url;
+	const explorer = 'https://testnet.bscscan.com/'; // signer.provider.connection.url;
 	const chainId = network.chainId;
-	const blocktime = 15000
-	const erc20 = 'ERC20';
+	const blocktime = 3000;
+	const erc20 = 'BEP20';
 	const confirmations = 12
-	
-	const coin = 'ETH'
+	const coin = "BNB"
 	console.log('Starting ' + netId + ('(' + String(chainId).red + ')') + ' by ', signer.address.yellow);
 
 	console.log('Deploying ' + netId + ' Bridge contract...'.blue);
 	const Bridge = await hre.ethers.getContractFactory("Bridge");
 	const bridge = await Bridge.deploy(admin);
-	console.log('\tBridge\t' + bridge.address.green);
+	console.log('\tBridge' + '\t' + bridge.address.green);
 
 	console.log('writing network...'.blue);
 	/* -------------- writing... -----------------*/

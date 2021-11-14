@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract Ownable {
-  address _owner;
+  address public owner;
 
 
   event OwnershipRenounced(address indexed previousOwner);
@@ -17,14 +17,14 @@ contract Ownable {
    * account.
    */
   constructor() {
-    _owner = msg.sender;
+    owner = msg.sender;
   }
 
   /**
    * @dev Throws if called by any account other than the owner.
    */
   modifier onlyOwner() {
-    require(msg.sender == _owner);
+    require(msg.sender == owner);
     _;
   }
   
@@ -35,15 +35,15 @@ contract Ownable {
 
   function transferOwnership(address newOwner) public onlyOwner {
     require(newOwner != address(0));
-    emit OwnershipTransferred(_owner, newOwner);
-    _owner = newOwner;
+    emit OwnershipTransferred(owner, newOwner);
+    owner = newOwner;
   }
 
   /**
    * @dev Allows the current owner to relinquish control of the contract.
    */
   function renounceOwnership() public onlyOwner {
-    emit OwnershipRenounced(_owner);
-    _owner = address(0);
+    emit OwnershipRenounced(owner);
+    owner = address(0);
   }
 }

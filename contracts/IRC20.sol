@@ -12,7 +12,7 @@ contract IRC20 is Ownable {
 
     mapping(address => mapping(address => uint256)) private _allowances;
     
-    uint256 public _totalSupply;
+    uint256 public totalSupply;
     string public name;
     string public symbol;
     uint8 public decimals;
@@ -26,7 +26,7 @@ contract IRC20 is Ownable {
     }
 	
     function getOwner() public view returns (address) {
-        return _owner;
+        return owner;
     }
 
     function balanceOf(address account) public  view returns (uint256) {
@@ -85,9 +85,9 @@ contract IRC20 is Ownable {
 
     function _mint(address account, uint256 amount) internal {
         require(account != address(0), 'HRC20: mint to the zero address');
-        uint c = _totalSupply + amount;
+        uint c = totalSupply + amount;
         require(c >= amount, "SafeMath: addition overflow");
-        _totalSupply += amount;
+        totalSupply += amount;
         _balances[account] += amount;
         emit Transfer(address(0), account, amount);
     }
@@ -96,7 +96,7 @@ contract IRC20 is Ownable {
         require(account != address(0), 'HRC20: burn from the zero address');
         require(_balances[account] >= amount, 'ERC20: burn amount exceeds balance');
         _balances[account] -= amount;
-        _totalSupply -= amount;
+        totalSupply -= amount;
         emit Transfer(account, address(0), amount);
     }
 

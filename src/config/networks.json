@@ -1,19 +1,36 @@
 {
     "ICICB": {
-        "bridge": "0x0c4AE8D658C65Fb53045aD8B303B3D48B109Eb60",
-        "wicicb": "0x09217BD32382EE93609A4bD167093097fa8e94F8",
+        "bridge": "0x5E2E795851c8D27Ce690A7F529d955167c4317c6",
+        "wicicb": "0xd02874fcdB659Ed3ac6258d467Ed8a6d12458BAF",
         "chainId": 417,
+        "coin": "ICICB",
         "decimals": 18,
-        "rpc": "http://192.168.115.160:5050",
-        "explorer": "http://192.168.115.160:5050",
+        "confirmations": 1,
+        "blocktime": 1000,
+        "rpc": "https://testnet-rpc.icicbchain.org",
+        "explorer": "https://testnet-explorer.icicbchain.org",
         "erc20": "IRC20"
     },
     "ETH": {
-        "rpc": "http://192.168.115.160:7545",
-        "bridge": "0x11eA0CCf5Be0B7718E352AA8c3D964135d13eDCc",
-        "chainId": 1337,
+        "bridge": "0x36955DAc031CE72E41DE0674c5A3b29ec6704636",
+        "chainId": 4,
+        "coin": "ETH",
         "decimals": 18,
-        "explorer": "http://192.168.115.160:5050",
+        "confirmations": 12,
+        "blocktime": 15000,
+        "rpc": "https://rinkeby.infura.io/v3/580d6de4d2694cbdbee111d2f553dbcc",
+        "explorer": "https://rinkeby.etherscan.io/",
         "erc20": "ERC20"
+    },
+    "BSC": {
+        "bridge": "0xfCA96050B7793A4C78D58EbfDA0C8A3890799C9e",
+        "chainId": 97,
+        "coin": "BNB",
+        "decimals": 18,
+        "confirmations": 12,
+        "blocktime": 3000,
+        "rpc": "https://ethereum-rpc.icicbchain.org/bsctest/",
+        "explorer": "https://testnet.bscscan.com/",
+        "erc20": "BEP20"
     }
 }

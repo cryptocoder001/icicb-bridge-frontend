@@ -40,18 +40,26 @@ module.exports = {
 			url: "http://13.58.153.103",
 			accounts: [process.env.PRIVATEKEY]
 		},
+
 		bsctestnet :{
-			url: "http://185.25.48.34/api/v10/rpc/bsc-test",
+			url: "https://ethereum-rpc.icicbchain.org/bsctest/",
 			accounts: [process.env.PRIVATEKEY]
 		},
+
 		fantomtestnet: {
 			url: "https://rpc.testnet.fantom.network",
 			accounts: [process.env.PRIVATEKEY]
 		},
 		eth :{
-			url: "https://main-light.eth.linkpool.io/",
+			url: "https://ethereum-rpc.icicbchain.org",
 			accounts: [process.env.PRIVATEKEY]
 		},
+		
+		ethtest :{
+			url: "https://rinkeby.infura.io/v3/580d6de4d2694cbdbee111d2f553dbcc",
+			accounts: [process.env.PRIVATEKEY]
+		},
+
 		bsc :{
 			url: "https://bsc-dataseed1.ninicoin.io/",
 			accounts: [process.env.PRIVATEKEY]

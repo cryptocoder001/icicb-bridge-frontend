@@ -4,7 +4,9 @@ declare interface Window  {
     Web3: any;
 }
 
+
 interface WalletTypes {
+    chainIds:{[chainId:number|string]:string}
     chainId:number
     rpc:string
 
@@ -15,57 +17,98 @@ interface WalletTypes {
 	err:string
 }
 
-interface TokenTypes {
+interface NetworkTypes {
+    bridge: string
+    chainId: number
+    coin: string
+    decimals: number
+    confirmations: number 
+    blocktime: number
+    rpc: string
+    explorer: string
+    erc20: string
+    disabled?: boolean
+}
+
+/* interface TokenTypes {
     [network:string]:{
         [token:string]:{
             symbol: string
             decimals: number
         }
     }
+} */
+
+interface PendingType {
+    chain:string
+    targetChain:string
+    address:string
+    token:string
+    value:number
+    created: number
+}
+
+interface TxType {
+    tx:string
+    err:boolean
+    fee:string
 }
 
 interface PendingTypes {
-    [txid:string]:{
-        chain:string
-        targetChain:string
+    [txid:string]:PendingType
+}
+
+interface TxTypes {
+    [txid:string]:TxType
+}
+
+interface CoinTypes {
+    [symbol:string]:{[chain:string]:{
         address:string
-        token:string
-        value:number
-        status?:boolean
-    }
+        decimals:number
+    }}
 }
 
 declare interface BridgeTypes extends WalletTypes {
     lang: string
     L: {[lang:string]:any}
 
-    tokens: TokenTypes
+    /* tokens: TokenTypes */
+    coins: CoinTypes
     loading: boolean
     inited: boolean
     pending: PendingTypes
+    txs: TxTypes
     chain: string
     targetChain: string
-	token: string
+	token: string // symbol
     value: string
 }
-
+declare interface ResultType {
+    err: string,
+    result: string
+}
 interface UseWalletTypes extends BridgeTypes {
-    update(payload:{[key:string]:string|number|boolean})
+    update(payload:{[key:string]:string|number|boolean|PendingTypes|TxTypes|CoinTypes})
 
-    getPending()
-    setPending(txId:string, chain:string, targetChain:string, address:string, token:string, value:number)
+    getPending():{pending: PendingTypes, txs:TxTypes}
+    setPending(key:string, pending:PendingType)
     removePending(txId:string)
+    setTxs(txs:TxTypes)
+    /* check(network:string, txs:Array<string>):Promise<{[txId:string]:number}> */
 
-    balance(token:string):Promise<number|null>
+    balance(token:string, rpc?:string):Promise<string|undefined>
+    bridgebalance(chain:string, token:string): Promise<string|undefined>
+
     connect():Promise<void>
 
     waitTransaction(txId:string): Promise<boolean>
     
-    approval(token:string): Promise<number|null>
-    approve(token:string, amount:number): Promise<string|null>
+    approval(token:string): Promise<string|undefined>
+    approve(token:string, amount:string): Promise<string|undefined>
 
     /* depositToIcicb(token:string, amount:string, targetChain:string, targetToken:string): Promise<string|null> */
-    deposit(token:string, amount:number, targetChain:number): Promise<string|null>
+    deposit(token:string, amount:string, targetChain:number): Promise<string|undefined>
 }
 
 declare type CallbackAccountsChanged = (address:string)=>void

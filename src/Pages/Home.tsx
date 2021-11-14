@@ -1,21 +1,22 @@
 import React from 'react';
 import Layout from '../components/Layout';
-import networks from '../config/networks.json'
+import Networks from '../config/networks.json'
 /* import config from '../config/contracts.json' */
-import useWallet, {CONNECTED, CONNECTING, ZERO, toEther} from '../useWallet';
+import useWallet, {CONNECTED, CONNECTING, ZERO, toEther, fromEther} from '../useWallet';
+import { getApiUrl } from '../util';
+
+const networks = Networks as {[chain:string]:NetworkTypes}
 
 interface HomeStatus {
 	query: string
 	submitLabel: string
 	loading:boolean
 }
-const getApiUrl = (uri) => process.env.REACT_APP_ENDPOINT + uri;
+
 
 const Home = () => {
 	const G = useWallet();
 	const L = G.L;
-	console.log('status', G.status)
-	
 	const refMenu = React.useRef<HTMLUListElement>(null)
 	const refList = React.useRef<HTMLInputElement>(null)
 	const refAmount = React.useRef<HTMLInputElement>(null)
@@ -25,29 +26,32 @@ const Home = () => {
 		loading:false,
 		query: '',
 	})
-	const updateStatus = (json) => setStatus({...status, ...json});
-	const pending = Object.keys(G.pending);
-	const erc20 = networks[G.chain].erc20;
-	const query = status.query.toLowerCase();
-	const tokens = G.tokens[G.chain];
-	const tokenArray:Array<string> = ['-'];
-	for(let k in tokens) {
-		if (k==='-') continue;
-		if (query!=='' && k.toLowerCase().indexOf(query)===-1) continue
-		tokenArray.push(k)
-	}
-	const token =  tokens[G.token]===undefined ? '-' : G.token
-	let loading = G.status===CONNECTING || status.loading;
+	const [isPending, setPending] = React.useState(false)
+	/* const [supported, setSupported] = React.useState(true) */
+	
+	const updateStatus = (json) => setStatus({...status, ...json})
+
+	
 
 	React.useEffect(()=>{
 		try {
 			if (!G.inited && !G.loading) {
-				console.log("fetch")
 				G.update({loading:true})
-				fetch(getApiUrl('all-tokens')).then(data=>data.json()).then(tokens=>{
-					G.update({tokens, pending:G.getPending(), inited:true, loading:false})
+				fetch(getApiUrl('all-tokens')).then(data=>data.json()).then(coins=>{
+					if (coins) {
+						checkPending()
+						/* const coins:CoinTypes = {}
+						for(let k in tokens) {
+							const net = tokens[k]
+							for(let t in net) {
+								if (coins[net[t].symbol]===undefined) coins[net[t].symbol] = {}
+								coins[net[t].symbol][k] = {t}
+							}
+						} */
+						G.update({/* tokens,  */coins, ...G.getPending(), inited:true, loading:false})
+					}
 				}).catch(reason=>{
-					G.update({loading:false, err:reason})
+					G.update({loading:false, err:reason.message})
 				})
 			}
 		} catch (error) {
@@ -55,92 +59,151 @@ const Home = () => {
 		}
 	}, [])
 
+	React.useEffect(()=>{
+		if (isPending) return;
+		let timer;
+		try {
+			timer = setTimeout(checkPending, 5000)
+		} catch (error) {
+			console.log(error)
+		}
+		return ()=>timer && clearTimeout(timer)
+	}, [isPending])
+
 	const onChangeNetwork = (chain:string)=>{
 		const net = networks[chain];
 		const chainId = net.chainId;
 		const rpc = net.rpc;
-		G.update({[G.targetChain==='ICICB' ? 'chain' : 'targetChain']:chain, chainId, rpc})
+		const _chain = G.targetChain==='ICICB' ? 'chain' : 'targetChain'
+		G.update({[_chain]:chain, chainId, rpc})
 		
 		if (refMenu && refMenu.current) {
 			refMenu.current.style.display = 'none'
-			setTimeout(()=>{
-				if (refMenu && refMenu.current) refMenu.current.style.display = ''
-			}, 100)
+			setTimeout(()=>(refMenu && refMenu.current && (refMenu.current.style.display = '')), 100)
 		}
-	};
-	const swapChains = () => {
-		const net = networks[G.targetChain];
-		const chainId = net.chainId;
-		const rpc = net.rpc;
-		G.update({chain:G.targetChain, targetChain:G.chain, chainId, rpc})
 	}
+
+	const swapChains = () => {
+		const net = networks[G.targetChain]
+		const chainId = net.chainId
+		const rpc = net.rpc
+		G.update({chain:G.targetChain, targetChain:G.chain, /* token, */ chainId, rpc})
+	}
+
+	const checkPending = async () => {
+		try {
+			if (!isPending) {
+				setPending(true)
+				const params:Array<string> = [];
+				for(let k in G.pending) {
+					if (G.txs[k]===undefined) params.push(k)
+				}
+				if (params.length) {
+					const data = await fetch(getApiUrl('get-txs'), {method:'POST',headers: {'Content-Type':'application/json'},body:JSON.stringify(params)})
+					const rows = await data.json()
+					if (Array.isArray(rows)) {
+						const now = Math.round(new Date().getTime() / 1000)
+						const txs:TxTypes = {...G.txs}
+						for(let v of rows) {
+							if (v.tx || (v.err && now - G.pending[v.key].created > 600)) {
+								txs[v.key] = {tx:v.tx, err:v.err, fee:v.fee}
+							}
+						}
+						G.setTxs(txs)
+					}
+				}
+				setPending(false)
+			}
+		} catch (err) {
+			console.log(err)
+		}
+	}
+
 	const onChangeQuery = (query:string)=>{
 		updateStatus({query})
-	};
+	}
+
 	const onChangeToken = (token:string)=>{
 		G.update({token})
 		if (refList && refList.current) {
 			refList.current.checked = false
 		}
-	};
+	}
+
 	const onChangeValue = (value:string)=>{
 		G.update({value})
-	};
+	}
+
 	const submit = async ()=>{
-		console.log(G.status)
-		if (G.status===CONNECTED) {
-			const value = Number(G.value)
-			if (value>0) {
-				G.update({err:''})
-				updateStatus({loading:true, submitLabel:'checking balance...'})
-				const balance = await G.balance(G.token)
-				if (balance!==null) {
-					if (balance>=value) {
-						let success = true;
-						console.log('balance', balance)
-						if (G.token!=='-') {
-							updateStatus({loading:true, submitLabel:'checking allowance...'})
-							const approval = await G.approval(G.token);
-							if (approval!==null) {
-								const decimals = tokens[G.token].decimals
-								console.log('approval', approval, 'decimals', decimals)
-								if (approval<value) {
-									updateStatus({loading:true, submitLabel:'allow brige contract ...'})
-									let tx = await G.approve(G.token, value);
-									if (tx!==null) {
-										await G.waitTransaction(tx)
+		try {
+			if (G.status===CONNECTED) {
+				const token = G.coins[G.token][G.chain]
+				const targetToken = G.coins[G.token][G.targetChain]
+				const amount = Number(G.value)
+				const value = fromEther(amount, token.decimals)
+				if (token && amount>0) {
+					G.update({err:''})
+					updateStatus({loading:true, submitLabel:'checking balance...'})
+					const rbalance = await G.balance(token.address)
+					const rbalance1 = G.targetChain==='ICICB' ? value : await G.bridgebalance(G.targetChain, targetToken.address)
+					if (rbalance!==undefined && rbalance1!==undefined) {
+						const balance = toEther(rbalance, token.decimals)
+						const balance1 =  toEther(rbalance1, targetToken.decimals)
+						if (balance>=amount) {
+							if (balance1>=amount) {
+								let success = true
+								if (token.address!=='-') {
+									updateStatus({loading:true, submitLabel:'checking allowance...'})
+									const rApproval = await G.approval(token.address)
+									if (rApproval!==undefined) {
+										const approval = toEther(rApproval, token.decimals)
+										console.log('approval', approval, 'decimals', token.decimals)
+										if (approval<amount) {
+											updateStatus({loading:true, submitLabel:'allow brige contract ...'})
+											let tx = await G.approve(token.address, value)
+											if (tx!==undefined) {
+												success = await G.waitTransaction(tx)
+											} else {
+												success = false
+											}
+										}
 									} else {
-										success = false;
+										success = false
 									}
 								}
+								if (success) {
+									updateStatus({loading:true, submitLabel:'exchanging...'})
+									const tx = await G.deposit(token.address==='-' ? ZERO : token.address, value, networks[G.targetChain].chainId)
+									if (tx!==undefined) {
+										updateStatus({loading:true, submitLabel:'confirming...'})
+										G.setPending(tx, {chain:G.chain, targetChain:G.targetChain, address:G.address, token:G.token, value:amount, created:Math.round(new Date().getTime()/1000)})
+										await G.waitTransaction(tx)
+										G.update({value:''})	
+									}
+								} else {
+									G.update({err:'the transaction failed'})	
+								}
 							} else {
-								success = false
+								G.update({err:"Sorry, there is not enough balance in the bridge store for swap."})	
 							}
+						} else {
+							G.update({err:"You haven't enough balance for swap"})
 						}
-						if (success) {
-							updateStatus({loading:true, submitLabel:'exchanging...'})
-							const tx = await G.deposit(G.token==='-' ? ZERO : G.token, value, G.chain==='ICICB' ? 0 : networks[G.chain].chainId)
-							if (tx!==null) {
-								updateStatus({loading:true, submitLabel:'confirming...'})
-								G.setPending(tx, G.chain, G.targetChain, G.address, G.token==='-' ? G.chain : G.tokens[G.chain][G.token].symbol, Number(value))
-								G.update({pending:G.getPending()})
-								await G.waitTransaction(tx)
-							}
-						}
-					} else {
-						G.update({err:'no enough balance'})
+						
 					}
-					updateStatus({loading:false})
+				} else if (refAmount?.current) {
+					refAmount.current.focus()
 				}
-			} else if (refAmount?.current) {
-				refAmount.current.focus()
+				updateStatus({loading:false})
+			} else {
+				updateStatus({submitLabel:'Connecting...'})
+				G.connect()
 			}
-		} else {
-			updateStatus({submitLabel:'Connecting...'})
-			G.connect()
+		} catch (err:any) {
+			G.update({err:err.message})
+			updateStatus({loading:false})
 		}
-	};
-
+	}
 	const ViewNetwork = (chain) => {
 		return (chain==='ICICB') ? (
 			<div className="chain flex">
@@ -167,10 +230,39 @@ const Home = () => {
 					</div>
 				</div>
 			</div>
-		);
+		)
 	}
+
+	const pendingTxs:Array<any> = []; 
+	/* const targetToken = getPair(G.targetChain, G.token) */
+	const targetToken = G.coins[G.token] && G.coins[G.token][G.targetChain]
+	const supported = targetToken!==undefined;
+	/* setSupported(getPair(G.targetChain, G.chain, token)!==undefined) */
+		
+	const erc20 = networks[G.chain].erc20;
+	const query = status.query.toLowerCase();
+	
 	
 
+	for(let k in G.pending) {
+		pendingTxs.push({key:k, ...G.pending[k]})
+	}
+	pendingTxs.sort((a,b)=>b.created - a.created)
+
+	const nativeCoin = networks[G.chain].coin
+	const tokenArray:Array<string> = nativeCoin==='ICICB' ? [] : [nativeCoin];
+	/* const tokens = []; */
+	for(let k in G.coins) {
+		if (k===nativeCoin) continue
+		const v = G.coins[k]
+		if (v[G.chain]!==undefined && v[G.targetChain]!==undefined) {
+			if (query!=='' && k.toLowerCase().indexOf(query)===-1) continue
+			tokenArray.push(k)
+		}
+	}
+	/* const token =  tokens[G.token]===undefined ? '-' : G.token */
+	let loading = G.status===CONNECTING || status.loading;
+	
 	return <Layout className="home">
 		<section>
 			<div className="c4 o1-md">
@@ -187,6 +279,7 @@ const Home = () => {
 			</div>
 			<div className="c ml3-md">
 				<div className="panel swap">
+				<p className="gray">If you have not add ICICB Chain network in your MetaMask yet, please click <span className="cmd">Add network</span> and continue</p>
 					<div className="flex">
 						<div className="c">
 							{ViewNetwork(G.chain)}
@@ -205,8 +298,8 @@ const Home = () => {
 						<input ref={refList} id="asset" type="checkbox" style={{display:'none'}} />
 						<label className="asset" htmlFor="asset">
 							<div className="flex">
-								<img src={token==='-' ? `/networks/${G.chain}.svg` : `/coins/${tokens[token].symbol}.svg`} style={{width:20, height:20, marginRight:10}} alt={token} />
-								<span>{token==='-' ? G.chain : tokens[token].symbol} <small>({token==='-' ? L['token.native'] : erc20})</small></span>
+								<img src={G.token===nativeCoin ? `/networks/${G.chain}.svg` : `/coins/${G.token}.svg`} style={{width:20, height:20, marginRight:10}} alt={G.token} />
+								<span>{G.token} <small>({G.token===nativeCoin ? L['token.native'] : erc20})</small></span>
 							</div>
 							<div>
 								<svg width="11" fill="#888" viewBox="0 0 11 11"><path d="M6.431 5.25L2.166 9.581l.918.919 5.25-5.25L3.084 0l-.918.919L6.43 5.25z"></path></svg>
@@ -222,9 +315,9 @@ const Home = () => {
 								<ul>
 									{tokenArray.map(k=>
 										<li key={k} onClick={()=>onChangeToken(k)}>
-											<img src={k==='-' ? `/networks/${G.chain}.svg` : `/coins/${tokens[k].symbol}.svg`} loading='lazy' style={{width:20, height:20, marginRight:10}} alt={tokens[k].symbol} />
-											<span>{k==='-' ? G.chain : tokens[k].symbol}</span>
-											<small>{k==='-' ? L['token.native'] : erc20}</small>
+											<img src={k===nativeCoin ? `/networks/${G.chain}.svg` : `/coins/${k}.svg`} loading='lazy' style={{width:20, height:20, marginRight:10}} alt={k} />
+											<span>{k}</span>
+											<small>{k===nativeCoin ? L['token.native'] : erc20}</small>
 										</li>
 									)}
 								</ul>
@@ -232,16 +325,19 @@ const Home = () => {
 						</div>
 						<label className="overlay" htmlFor="asset"></label>
 					</div>
-					<p className="gray">If you have not add ICICB Chain network in your MetaMask yet, please click <span className="cmd">Add network</span> and continue</p>
+					{!supported ? (
+						<p style={{color:'red', backgroundColor: '#2b2f36', padding: 10}}>{`We do not support ${L['chain.' + G.targetChain.toLowerCase()]}'s ${G.token} swap now.`}</p>
+					) : null}
 					<div className="label" style={{paddingTop:20}}>Amount</div>
 					<div>
-						<input ref={refAmount} className="amount" type="number" value={G.value} onChange={(e)=>onChangeValue(e.target.value)} />
+						<input disabled={!supported} ref={refAmount} className="amount" type="number" value={G.value} onChange={(e)=>onChangeValue(e.target.value)} />
 					</div>
-					{G.value!=='' ? (
-						<p className="gray">You will receive ≈ {G.value} {token==='-' ? G.chain : tokens[token].symbol} <small>({networks[G.targetChain].erc20})</small></p>
+
+					{G.value!=='' && targetToken ? (
+						<p className="gray">You will receive ≈ {G.value} {G.token==='-' ? networks[G.chain].coin : G.token} <small>({targetToken.address==='-' ? 'native token' : networks[G.targetChain].erc20})</small></p>
 					) : null}
 					<div style={{paddingTop:20}}>
-						<button disabled={loading} className="primary full" onClick={submit}>
+						<button disabled={loading || !supported} className="primary full" onClick={submit}>
 							{loading ? (
 								<div className="flex middle">
 									<div style={{width:'1.5em'}}>
@@ -251,24 +347,36 @@ const Home = () => {
 								</div>) : (G.status===CONNECTED ? 'SUBMIT' : 'Connect wallet')
 							}
 						</button>
+						
 						{G.err ? (
 							<p style={{color:'red', backgroundColor: '#2b2f36', padding: 10}}>{G.err}</p>
 						) : (
 							<p style={{color:'#35ff35'}}>{G.address ? 'Your wallet: ' + G.address.slice(0,10) + '...' + G.address.slice(-4) : ''}</p>
 						)}
 					</div>
-					{pending.length ? (
+					{pendingTxs.length ? (
 						<div style={{paddingTop:20}}>
-							<p><b>Your pending transactions:</b></p>
-							{pending.map(k=>(
-								<div key={k}>
-									<a className="cmd" href={networks[G.pending[k].chain].explorer + '/tx/' + k} target="_blank">
-										<code>{k.slice(0,10) + '...' + k.slice(-4) + ' ' + G.pending[k].token + ' ' + G.pending[k].value + ' ['}</code>
-										<i>{G.pending[k].chain + ' ' + ' To ' + G.pending[k].targetChain}</i>
-										<span>] </span>
-										<code style={{color:G.pending[k].status ? 'lightgreen' : 'red'}}>({G.pending[k].status ? 'success' : 'pending'})</code>
-									</a>
-								</div>
+							<p><b className="label">Your transactions:</b></p>
+							{pendingTxs.map((v,k)=>(
+								<a className={"tx flex" + (G.txs[v.key]?.tx ? '' : ' pending') } key={k}>
+									<div className="c1">
+										<img src={`/networks/${v.chain}.svg`} style={{width:16, height:16, marginRight:5}} alt={v.chain} />
+										<span>To</span>
+										<img src={`/networks/${v.targetChain}.svg`} style={{width:16, height:16, marginLeft:5}} alt={v.targetChain} />
+									</div>
+									<code className="c2"><a className="cmd" href={networks[v.chain].explorer + '/tx/' + v.key} target="_blank" rel="noreferrer" >{v.key.slice(0,10) + '...' + v.key.slice(-4)}</a></code>
+									<code className="c3">
+										<img src={`/coins/${v.token}.svg`} loading='lazy' style={{width:20, height:20, marginRight:5}} alt={v.token} />
+										<span title={G.txs[v.key]?.fee || ''}>{v.value}</span>
+									</code>
+									<div className="c4" style={{textAlign:"right"}}>
+										{G.txs[v.key]?.tx ? (
+											<a className="cmd" href={networks[v.targetChain].explorer + '/tx/' + G.txs[v.key].tx} target="_blank" rel="noreferrer">view result</a>
+										) : (
+											G.txs[v.key]?.err ? <code style={{color:'red'}}>error</code> : <code style={{color:'#76808f'}}>pending…</code>
+										)}
+									</div>
+								</a>
 							))}
 						</div>
 					) : null}
