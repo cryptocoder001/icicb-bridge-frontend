@@ -89,7 +89,7 @@ declare interface ResultType {
 }
 interface UseWalletTypes extends BridgeTypes {
     update(payload:{[key:string]:string|number|boolean|PendingTypes|TxTypes|CoinTypes})
-
+    addNetwork();
     getPending():{pending: PendingTypes, txs:TxTypes}
     setPending(key:string, pending:PendingType)
     removePending(txId:string)

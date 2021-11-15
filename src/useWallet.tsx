@@ -28,6 +28,7 @@ const ERR_CHAINID 		= '🦊 Invalid chain id #:chainId'
 
 const useWallet = ():UseWalletTypes => {
 	const G = useSelector((state:BridgeTypes)=>state)
+	const L = G.L
 	const dispatch = useDispatch()
 	const update = (payload:{[key:string]:any}) => dispatch(Slice.actions.update(payload))
 	const connected = G.status===CONNECTED;
@@ -165,7 +166,28 @@ const useWallet = ():UseWalletTypes => {
     const connect = async (): Promise<void> =>{
 		_connect();
     }
-    
+    const addNetwork = async () => {
+		const { ethereum } = window
+		if (ethereum) {
+			ethereum.request({
+				method: 'wallet_addEthereumChain',
+				params: [{
+					chainId: toHex(networks.ICICB.chainId),
+					chainName: L['chain.icicb'],
+					nativeCurrency: {
+						name: 'ICICB Coin',
+						symbol: 'ICICB',
+						decimals: 18
+					},
+					rpcUrls: [networks.ICICB.rpc],
+					blockExplorerUrls: [networks.ICICB.explorer]
+				}]
+			}).catch((error) => {
+				console.log(error)
+			}) 
+		}
+		
+	}
 	const call = async (to:string, abi:any, method:string, args:Array<string|number|boolean>, rpc?:string): Promise<any> => {
 		const web3 = new window.Web3(rpc || G.rpc)
 		const contract = new web3.eth.Contract(abi, to)
@@ -262,7 +284,7 @@ const useWallet = ():UseWalletTypes => {
 	const deposit = async (token:string, value:string, targetChain:number): Promise<string|undefined> => {
 		return await send(networks[G.chain].bridge, abiBridge, token===ZERO ? value : '0x0', 'deposit', [token, value, targetChain])
 	}
-	return {...G, update, getPending, setPending, removePending, setTxs, connect, balance, bridgebalance, waitTransaction, approval, approve, /* depositToIcicb,  */deposit};
+	return {...G, update, addNetwork, getPending, setPending, removePending, setTxs, connect, balance, bridgebalance, waitTransaction, approval, approve, /* depositToIcicb,  */deposit};
 }
 
 export default useWallet

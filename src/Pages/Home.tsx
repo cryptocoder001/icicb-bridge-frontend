@@ -73,7 +73,9 @@ const Home = () => {
 			setTimeout(()=>(refMenu && refMenu.current && (refMenu.current.style.display = '')), 100)
 		}
 	}
-
+	const addNetwork = () => {
+		G.addNetwork()
+	}
 	const swapChains = () => {
 		const net = networks[G.targetChain]
 		const chainId = net.chainId
@@ -124,7 +126,7 @@ const Home = () => {
 	const onChangeValue = (value:string)=>{
 		G.update({value})
 	}
-
+	
 	const submit = async ()=>{
 		try {
 			if (G.status===CONNECTED) {
@@ -266,7 +268,7 @@ const Home = () => {
 			</div>
 			<div className="c ml3-md">
 				<div className="panel swap">
-				<p className="gray">If you have not add ICICB Chain network in your MetaMask yet, please click <span className="cmd">Add network</span> and continue</p>
+				<p className="gray">If you have not add ICICB Chain network in your MetaMask yet, please click <span className="cmd" onClick={addNetwork}>Add network</span> and continue</p>
 					<div className="flex">
 						<div className="c">
 							{ViewNetwork(G.chain)}
