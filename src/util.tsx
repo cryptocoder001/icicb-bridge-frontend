@@ -21,15 +21,8 @@ export const tips = (html:string) => {
 	toast(html, {
 		position: "top-right",
 		autoClose: 1000,
-		/* hideProgressBar: false, */
-		/* closeOnClick: true,
-		pauseOnHover: true, */
-		/* draggable: true, */
-		/* progress: undefined, */
 	});
 }
-
-// export const NF = (num:number,p:number=2) => Number(num).toFixed(p);// .replace(/(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 export const NF = (num:number,p:number=2) => Number(num).toFixed(p).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 export const TF = (time:number,offset:number=2) => {
     let iOffset = Number(offset);

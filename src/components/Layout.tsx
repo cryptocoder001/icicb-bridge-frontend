@@ -1,28 +1,9 @@
 /* import React from 'react'; */
 import {Link} from "react-router-dom";
-import { useSelector/* , useDispatch */} from 'react-redux';
-/* import bridgeSlice from '../reducer'; */
-
-/* import imgLang from '../assets/sym-lang.png';
-
-import { DataState } from '../@types/store'; */
-
+import { useSelector} from 'react-redux';
 const Layout = (props:any) => {
     const G = useSelector((state:BridgeTypes) => state);
 	const L = G.L;
-	/* const dispatch = useDispatch();
-	const update = (json) => dispatch(bridgeSlice.actions.update(json)); */
-
-    /* function changeLang(lang:string){
-        update({lang});
-    }
-
-    const handleChainChanged = (chainId)=>{
-        let {ethereum} = window;
-        if(ethereum.isConnected()&&Number(chainId) === 4002){
-            onConnect("metamask");
-        }
-    } */
 
     return (<>
         <header>

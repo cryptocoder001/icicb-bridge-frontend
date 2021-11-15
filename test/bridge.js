@@ -30,14 +30,8 @@ describe("UnitTest for Bridge Contract", () => {
 			['Pegged ATOM', 'ATOM', 18] */
 		];
 		const tx = await bridge.connect(admin).createToken(_tokens.map(v=>v[0]), _tokens.map(v=>v[1]), _tokens.map(v=>v[2]))
-		/* const tx = await bridge.connect(admin).createToken(
-			['Wrapped Ether', 'Wrapped BNB', 'Wrapped HT'],
-			['ETH', 'BNB', 'HT'],
-			[18, 18, 18]
-		); */
 		await tx.wait()
 		const count = Number(await bridge.tokenCount())
-		/* expect(count===3, "incorrect pegged token count") */
 		for(let i=0; i<count; i++) {
 			const token = await bridge.tokens(i)
 			tokens.push(token)
@@ -47,10 +41,6 @@ describe("UnitTest for Bridge Contract", () => {
 
 	it("test for transfer", async ()=>{
 		const amount = ethers.utils.parseUnits("1", 18)
-		/* const fromChainId = 1
-		const fromToken = '0x01a30ebad8f72e6a4e5a4eb8376bbf7a1f854047'
-		const extra = '0x9feda7cbbaa670899c53c1e130883aa8001a9cba3c7cc2b72f635c61c0520806' */
-
 		// test transfer
 		const txTr = await bridge.connect(admin).transfer([
 			[tokens[0], addrs[0].address, amount/* , fromChainId, fromToken, extra */], 

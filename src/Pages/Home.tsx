@@ -1,7 +1,6 @@
 import React from 'react';
 import Layout from '../components/Layout';
 import Networks from '../config/networks.json'
-/* import config from '../config/contracts.json' */
 import useWallet, {CONNECTED, CONNECTING, ZERO, toEther, fromEther} from '../useWallet';
 import { getApiUrl } from '../util';
 
@@ -27,7 +26,6 @@ const Home = () => {
 		query: '',
 	})
 	const [isPending, setPending] = React.useState(false)
-	/* const [supported, setSupported] = React.useState(true) */
 	
 	const updateStatus = (json) => setStatus({...status, ...json})
 
@@ -41,7 +39,7 @@ const Home = () => {
 					if (coins) {
 						console.log('coins', coins)
 						checkPending()
-						G.update({/* tokens,  */coins, ...G.getPending(), inited:true, loading:false})
+						G.update({coins, ...G.getPending(), inited:true, loading:false})
 					}
 				}).catch(reason=>{
 					G.update({loading:false, err:reason.message})
@@ -227,10 +225,8 @@ const Home = () => {
 	}
 
 	const pendingTxs:Array<any> = []; 
-	/* const targetToken = getPair(G.targetChain, G.token) */
 	const targetToken = G.coins[G.token] && G.coins[G.token][G.targetChain]
 	const supported = targetToken!==undefined;
-	/* setSupported(getPair(G.targetChain, G.chain, token)!==undefined) */
 		
 	const erc20 = networks[G.chain].erc20;
 	const query = status.query.toLowerCase();
@@ -244,7 +240,6 @@ const Home = () => {
 
 	const nativeCoin = networks[G.chain].coin
 	const tokenArray:Array<string> = nativeCoin==='ICICB' ? [] : [nativeCoin];
-	/* const tokens = []; */
 	for(let k in G.coins) {
 		if (k===nativeCoin) continue
 		const v = G.coins[k]
@@ -253,7 +248,6 @@ const Home = () => {
 			tokenArray.push(k)
 		}
 	}
-	/* const token =  tokens[G.token]===undefined ? '-' : G.token */
 	let loading = G.status===CONNECTING || status.loading;
 	
 	return <Layout className="home">
@@ -351,7 +345,7 @@ const Home = () => {
 						<div style={{paddingTop:20}}>
 							<p><b className="label">Your transactions:</b></p>
 							{pendingTxs.map((v,k)=>(
-								<a className={"tx flex" + (G.txs[v.key]?.tx ? '' : ' pending') } key={k}>
+								<div className={"tx flex" + (G.txs[v.key]?.tx ? '' : ' pending') } key={k}>
 									<div className="c1">
 										<img src={`/networks/${v.chain}.svg`} style={{width:16, height:16, marginRight:5}} alt={v.chain} />
 										<span>To</span>
@@ -369,7 +363,7 @@ const Home = () => {
 											G.txs[v.key]?.err ? <code style={{color:'red'}}>error</code> : <code style={{color:'#76808f'}}>pending…</code>
 										)}
 									</div>
-								</a>
+								</div>
 							))}
 						</div>
 					) : null}

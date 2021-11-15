@@ -23,15 +23,6 @@ const initial:WalletTypes = {
     err:'',
 }
 
-/* const tokens:TokenTypes = {}
-for(let k in networks) {
-	tokens[networks[k].coin] = {
-		'-' : {
-			symbol: k,
-			decimals: networks[k].decimals
-		}
-	}
-} */
 const coins:CoinTypes = {}
 for(let k in networks) {
 	coins[networks[k].coin] = {[k]:{address:'-', decimals:networks[k].decimals}}
@@ -40,8 +31,7 @@ for(let k in networks) {
 const initialState: BridgeTypes = {
 	lang,
     L: locales[lang],
-
-	/* tokens,  */
+	
 	coins, 
 	loading: false,
 	inited: false,

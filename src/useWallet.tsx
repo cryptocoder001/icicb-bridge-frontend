@@ -1,12 +1,10 @@
 import React from 'react'
 import { useSelector, useDispatch}	from 'react-redux';
-/* import JSBI 						from 'jsbi'; */
 import abiIrc20 					from './config/abis/IRC20.json'
 import abiBridge 					from './config/abis/Bridge.json'
 import networks 					from './config/networks.json'
 import Slice 						from './reducer'
 import Web3 						from 'web3'
-/* import { getApiUrl } 				from './util'; */
 
 export const DISCONNECTED= 'disconnected';
 export const CONNECTING = 'connecting';
@@ -41,7 +39,6 @@ const useWallet = ():UseWalletTypes => {
 				if (chainId===G.chainId) {
 					update({status:CONNECTED})
 				} else {
-					// err = ERR_CHAINID.replace(':chainId', String(chainId))	
 					update({status:DISCONNECTED, err:ERR_DISCONNECTED})
 				}
 			});
@@ -51,12 +48,8 @@ const useWallet = ():UseWalletTypes => {
 	React.useEffect(() => {
 		const { ethereum } = window
 		if (ethereum && connected) {
-			/* if (ethereum.isConnected && !connected) {
-				_connect();
-			} */
 			ethereum.on('accountsChanged', accountChanged)
 			ethereum.on('chainChanged', chainChanged)
-			
 		}
 	})
 
@@ -239,19 +232,13 @@ const useWallet = ():UseWalletTypes => {
 		}
 		return false;
 	}
-	/* const getPairToken = async (targetChain:string, token:string): Promise<string> => {
-		return ""; // G.tokens[targetChain]
-	} */
+	
 	const balance = async (token:string): Promise<string|undefined> => {
 		const web3 = new Web3(G.rpc)
 		if (token==='-') {
 			return await web3.eth.getBalance(G.address)
-			/* if (res) return toEther(res, decimals) */
-
 		} else {
 			return await call(token, abiIrc20, 'balanceOf', [G.address])
-
-			/* if (res) return toEther(res, decimals) */
 		}
 	}
 	const bridgebalance = async (chain:string, token:string): Promise<string|undefined> => {
@@ -260,32 +247,20 @@ const useWallet = ():UseWalletTypes => {
 		if (token==='-') {
 			const web3 = new Web3(net.rpc)
 			return await web3.eth.getBalance(net.bridge)
-			/* if (res) return toEther(res, decimals) */
-
 		} else {
 			return await call(token, abiIrc20, 'balanceOf', [net.bridge], net.rpc)
-
-			/* if (res) return toEther(res, decimals) */
 		}
 	}
 
 	const approval = async (token:string): Promise<string|undefined> => {
 		return await call(token, abiIrc20, 'allowance', [G.address, networks[G.chain].bridge])
-		/* return toEther(_approval, G.tokens[G.chain][token].decimals); */
 	}
 
     const approve = async (token:string, value:string): Promise<string|undefined> => {
-		// const value = fromEther(Math.ceil(amount * 1e6), G.tokens[G.chain][token].decimals - 6)
 		return await send(token, abiIrc20, '0x0', 'approve', [networks[G.chain].bridge, value])
 	}
 
 	const deposit = async (token:string, value:string, targetChain:number): Promise<string|undefined> => {
-		/* let value = "";
-		if (token===ZERO) {
-			value = fromEther(Math.ceil(amount * 1e6), networks[G.chain].decimals - 6)
-		} else {
-			value = fromEther(Math.ceil(amount * 1e6), G.tokens[G.chain][token].decimals - 6)
-		} */
 		return await send(networks[G.chain].bridge, abiBridge, token===ZERO ? value : '0x0', 'deposit', [token, value, targetChain])
 	}
 	return {...G, update, getPending, setPending, removePending, setTxs, connect, balance, bridgebalance, waitTransaction, approval, approve, /* depositToIcicb,  */deposit};
