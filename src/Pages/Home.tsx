@@ -39,15 +39,8 @@ const Home = () => {
 				G.update({loading:true})
 				fetch(getApiUrl('all-tokens')).then(data=>data.json()).then(coins=>{
 					if (coins) {
+						console.log('coins', coins)
 						checkPending()
-						/* const coins:CoinTypes = {}
-						for(let k in tokens) {
-							const net = tokens[k]
-							for(let t in net) {
-								if (coins[net[t].symbol]===undefined) coins[net[t].symbol] = {}
-								coins[net[t].symbol][k] = {t}
-							}
-						} */
 						G.update({/* tokens,  */coins, ...G.getPending(), inited:true, loading:false})
 					}
 				}).catch(reason=>{
