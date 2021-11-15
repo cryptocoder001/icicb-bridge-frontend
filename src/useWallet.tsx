@@ -4,16 +4,15 @@ import abiIrc20 					from './config/abis/IRC20.json'
 import abiBridge 					from './config/abis/Bridge.json'
 import networks 					from './config/networks.json'
 import Slice 						from './reducer'
-import Web3 						from 'web3'
+/* import Web3 						from 'web3' */
 
 export const DISCONNECTED= 'disconnected';
 export const CONNECTING = 'connecting';
 export const CONNECTED 	= 'connected';
-
+/* export const getWeb3 = ()=>window.Web3; */
 export const ZERO = "0x0000000000000000000000000000000000000000"
-export const utils = new Web3().utils;
-export const toHex = (val: string | number): string => utils.toHex(val)
-export const validAddress = (address: string): boolean => utils.isAddress(address)
+export const toHex = (val: string | number): string => new window.Web3().utils.toHex(val)
+export const validAddress = (address: string): boolean => new window.Web3().isAddress(address)
 export const fromEther = (v:number, p?:number) => '0x'+(BigInt(Math.round(v*1e6)) * BigInt(10 ** ((p || 18)-6))).toString(16)
 export const toEther = (v:number|string, p?:number) => Number(BigInt(v) / BigInt(10 ** ((p || 18)-6)))/1e6
 
@@ -168,7 +167,7 @@ const useWallet = ():UseWalletTypes => {
     }
     
 	const call = async (to:string, abi:any, method:string, args:Array<string|number|boolean>, rpc?:string): Promise<any> => {
-		const web3 = new Web3(rpc || G.rpc)
+		const web3 = new window.Web3(rpc || G.rpc)
 		const contract = new web3.eth.Contract(abi, to)
 		return await contract.methods[method](...args).call()
 	}
@@ -178,7 +177,7 @@ const useWallet = ():UseWalletTypes => {
 		try {
 			const { ethereum } = window
 			if (ethereum && ethereum.isConnected) {
-				const web3 = new Web3(ethereum)
+				const web3 = new window.Web3(ethereum)
 				const contract = new web3.eth.Contract(abi, to)
 				const data = contract.methods[method](...args).encodeABI()
 				const json = {from:G.address, to, value, data}
@@ -218,7 +217,7 @@ const useWallet = ():UseWalletTypes => {
 	}
 	
     const waitTransaction = async (txId:string): Promise<boolean> => {
-		const web3 = new Web3(G.rpc)
+		const web3 = new window.Web3(G.rpc)
 		let repeat = 100
 		while (--repeat > 0) {
 			const receipt = await web3.eth.getTransactionReceipt(txId)
@@ -234,7 +233,7 @@ const useWallet = ():UseWalletTypes => {
 	}
 	
 	const balance = async (token:string): Promise<string|undefined> => {
-		const web3 = new Web3(G.rpc)
+		const web3 = new window.Web3(G.rpc)
 		if (token==='-') {
 			return await web3.eth.getBalance(G.address)
 		} else {
@@ -245,7 +244,7 @@ const useWallet = ():UseWalletTypes => {
 		const net = networks[chain]
 		
 		if (token==='-') {
-			const web3 = new Web3(net.rpc)
+			const web3 = new window.Web3(net.rpc)
 			return await web3.eth.getBalance(net.bridge)
 		} else {
 			return await call(token, abiIrc20, 'balanceOf', [net.bridge], net.rpc)
