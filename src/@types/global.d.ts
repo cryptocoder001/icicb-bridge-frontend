@@ -73,7 +73,6 @@ declare interface BridgeTypes extends WalletTypes {
     lang: string
     L: {[lang:string]:any}
 
-    /* tokens: TokenTypes */
     coins: CoinTypes
     loading: boolean
     inited: boolean
@@ -95,8 +94,6 @@ interface UseWalletTypes extends BridgeTypes {
     setPending(key:string, pending:PendingType)
     removePending(txId:string)
     setTxs(txs:TxTypes)
-    /* check(network:string, txs:Array<string>):Promise<{[txId:string]:number}> */
-
     balance(token:string, rpc?:string):Promise<string|undefined>
     bridgebalance(chain:string, token:string): Promise<string|undefined>
 
