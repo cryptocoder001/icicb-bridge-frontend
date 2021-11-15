@@ -78,11 +78,10 @@ const useWallet = ():UseWalletTypes => {
 		update({txs})
 	}
 
-	/* const check = async (network:string, txs:Array<string>):Promise<{[txId:string]:number}> =>  {
+	const check = async (network:string, txs:Array<string>):Promise<{[txId:string]:number}> =>  {
 		const results:{[txId:string]:number} = {}
 		const net = networks[network]
-		const confirmations = net.confirmations
-		const web3 = new Web3(net.rpc)
+		const web3 = new window.Web3(net.rpc)
 		const height = await web3.eth.getBlockNumber()
 		const limit = 20
 		const count = txs.length
@@ -97,16 +96,16 @@ const useWallet = ():UseWalletTypes => {
 				body:JSON.stringify(json),
 				headers: {Accept: "application/json","Content-Type": "application/json"},
 				method: "POST"
-			});
+			})
 			const result = await response.json();
-			if (result!==null && Array.isArray(result.data)) {
-				for(let v of result.data) {
-					results[txs[v.id]] = v.result && v.result.status === '0x1' ? (height - Number(v.result.blockNumber) + 1>=confirmations ? 1 : 0) : -1
+			if (result!==null && Array.isArray(result)) {
+				for(let v of result) {
+					results[txs[v.id]] = v.result && v.result.status === '0x1' ? height - Number(v.result.blockNumber) + 1 : -1
 				}
 			}
 		}
 		return results
-	} */
+	}
 	const removePending = (txId:string) => {
 		try {
 			let pending = getPending()
@@ -284,7 +283,7 @@ const useWallet = ():UseWalletTypes => {
 	const deposit = async (token:string, value:string, targetChain:number): Promise<string|undefined> => {
 		return await send(networks[G.chain].bridge, abiBridge, token===ZERO ? value : '0x0', 'deposit', [token, value, targetChain])
 	}
-	return {...G, update, addNetwork, getPending, setPending, removePending, setTxs, connect, balance, bridgebalance, waitTransaction, approval, approve, /* depositToIcicb,  */deposit};
+	return {...G, update, check, addNetwork, getPending, setPending, removePending, setTxs, connect, balance, bridgebalance, waitTransaction, approval, approve, /* depositToIcicb,  */deposit};
 }
 
 export default useWallet

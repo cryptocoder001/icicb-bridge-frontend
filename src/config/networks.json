@@ -1,7 +1,7 @@
 {
     "ICICB": {
-        "bridge": "0x5E2E795851c8D27Ce690A7F529d955167c4317c6",
-        "wicicb": "0xd02874fcdB659Ed3ac6258d467Ed8a6d12458BAF",
+        "bridge": "0x02a52d292985Ab635b8a0f1ba03BD15764275DE9",
+        "wicicb": "0x13f8cf475F4795Bc4Ebf314F56Faab0A0133BC51",
         "chainId": 417,
         "coin": "ICICB",
         "decimals": 18,
@@ -12,7 +12,7 @@
         "erc20": "IRC20"
     },
     "ETH": {
-        "bridge": "0x36955DAc031CE72E41DE0674c5A3b29ec6704636",
+        "bridge": "0x1AbbA4d5565305Af584D3a069e78690BC816B4fB",
         "chainId": 4,
         "coin": "ETH",
         "decimals": 18,
@@ -23,7 +23,7 @@
         "erc20": "ERC20"
     },
     "BSC": {
-        "bridge": "0xfCA96050B7793A4C78D58EbfDA0C8A3890799C9e",
+        "bridge": "0x097a7f06191e8E34B0A7bBf4547DbAF66b3A7f80",
         "chainId": 97,
         "coin": "BNB",
         "decimals": 18,

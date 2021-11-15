@@ -30,15 +30,6 @@ interface NetworkTypes {
     disabled?: boolean
 }
 
-/* interface TokenTypes {
-    [network:string]:{
-        [token:string]:{
-            symbol: string
-            decimals: number
-        }
-    }
-} */
-
 interface PendingType {
     chain:string
     targetChain:string
@@ -52,6 +43,7 @@ interface TxType {
     tx:string
     err:boolean
     fee:string
+    confirmations: number
 }
 
 interface PendingTypes {
@@ -90,6 +82,7 @@ declare interface ResultType {
 interface UseWalletTypes extends BridgeTypes {
     update(payload:{[key:string]:string|number|boolean|PendingTypes|TxTypes|CoinTypes})
     addNetwork();
+    check(network:string, txs:Array<string>):Promise<{[txId:string]:number}>
     getPending():{pending: PendingTypes, txs:TxTypes}
     setPending(key:string, pending:PendingType)
     removePending(txId:string)

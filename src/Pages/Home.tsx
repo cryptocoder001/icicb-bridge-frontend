@@ -87,19 +87,44 @@ const Home = () => {
 		try {
 			if (!isPending) {
 				setPending(true)
-				const params:Array<string> = [];
+				const params1:{[chainId:string]:Array<string>} = {};
+				const params2:Array<string> = [];
 				for(let k in G.pending) {
-					if (G.txs[k]===undefined) params.push(k)
+					const v = G.pending[k]
+					const confirmations = G.txs[k]?.confirmations || 0
+					if (networks[v.chain].confirmations > confirmations) {
+						if (params1[v.chain]===undefined) params1[v.chain] = []
+						params1[v.chain].push(k)
+					} else {
+						if (G.txs[k] && !G.txs[k].err && !G.txs[k].tx) params2.push(k)
+					}
 				}
-				if (params.length) {
-					const data = await fetch(getApiUrl('get-txs'), {method:'POST',headers: {'Content-Type':'application/json'},body:JSON.stringify(params)})
+				if (Object.keys(params1).length) {
+					const res = await Promise.all(Object.keys(params1).map(k=>G.check(k, params1[k])))
+					const txs:TxTypes = {...G.txs}
+					const now = Math.round(new Date().getTime() / 1000)
+					for(let v of res) {
+						if (v) {
+							for(let k in v) {
+								if (v[k]===-1) {
+									if (now - G.pending[k].created > 600) txs[k] = {...txs[k], err:true}
+								} else {
+									txs[k] = {...txs[k], confirmations:v[k]}
+								}
+							}
+						}
+					}
+					G.setTxs(txs)
+				}
+				if (params2.length) {
+					const data = await fetch(getApiUrl('get-txs'), {method:'POST',headers: {'Content-Type':'application/json'},body:JSON.stringify(params2)})
 					const rows = await data.json()
 					if (Array.isArray(rows)) {
 						const now = Math.round(new Date().getTime() / 1000)
 						const txs:TxTypes = {...G.txs}
 						for(let v of rows) {
 							if (v.tx || (v.err && now - G.pending[v.key].created > 600)) {
-								txs[v.key] = {tx:v.tx, err:v.err, fee:v.fee}
+								txs[v.key] = {...txs[v.key], tx:v.tx, err:v.err, fee:v.fee}
 							}
 						}
 						G.setTxs(txs)
@@ -234,7 +259,6 @@ const Home = () => {
 	const query = status.query.toLowerCase();
 	
 	
-
 	for(let k in G.pending) {
 		pendingTxs.push({key:k, ...G.pending[k]})
 	}
@@ -348,6 +372,7 @@ const Home = () => {
 					{pendingTxs.length ? (
 						<div style={{paddingTop:20}}>
 							<p><b className="label">Your transactions:</b></p>
+							<div style={{maxHeight:300, overflowY:'auto'}}>
 							{pendingTxs.map((v,k)=>(
 								<div className={"tx flex" + (G.txs[v.key]?.tx ? '' : ' pending') } key={k}>
 									<div className="c1">
@@ -361,14 +386,19 @@ const Home = () => {
 										<span title={G.txs[v.key]?.fee || ''}>{v.value}</span>
 									</code>
 									<div className="c4" style={{textAlign:"right"}}>
-										{G.txs[v.key]?.tx ? (
-											<a className="cmd" href={networks[v.targetChain].explorer + '/tx/' + G.txs[v.key].tx} target="_blank" rel="noreferrer">view result</a>
-										) : (
-											G.txs[v.key]?.err ? <code style={{color:'red'}}>error</code> : <code style={{color:'#76808f'}}>pending…</code>
-										)}
+										{G.txs[v.key] ? (
+											G.txs[v.key].tx ? (
+												<a className="cmd" href={networks[v.targetChain].explorer + '/tx/' + G.txs[v.key].tx} target="_blank" rel="noreferrer">view result</a>
+											) : (
+												G.txs[v.key].err ? (<code style={{color:'red'}}>error</code>) : (<code style={{color:'#76808f'}}>{G.txs[v.key].confirmations >= networks[v.chain].confirmations ? 'pending…' : G.txs[v.key].confirmations + ' / ' + networks[v.chain].confirmations}</code>
+												)
+											)
+										) : <code style={{color:'#76808f'}}>confirming...</code>
+										}
 									</div>
 								</div>
 							))}
+							</div>
 						</div>
 					) : null}
 				</div>

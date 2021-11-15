@@ -11,6 +11,7 @@ contract Bridge is Ownable, IBridge {
 	uint					public tokenCount;
 	address[]				public tokens;
 	mapping(address=>uint) 	public tokenIndexes;
+	mapping(bytes32=>bool) 	public exists;
 
 	constructor(address _admin) {
 		admin = _admin;
@@ -66,17 +67,20 @@ contract Bridge is Ownable, IBridge {
 			address _token 		= address(uint160(_args[i][0]));
 			address _to			= address(uint160(_args[i][1]));
 			uint _amount 		= _args[i][2];
+			bytes32 _extra 		= bytes32(_args[i][3]);
 			bool isPegged = false;
-			
-			if (_token==address(0)) {
-				payable(_to).transfer(_amount);
-			} else {
-				isPegged = tokenIndexes[_token]!=0;
-				if (isPegged) {
-					IRC20(_token).mintTo(_to, _amount);
+			if (!exists[_extra]) {
+				if (_token==address(0)) {
+					payable(_to).transfer(_amount);
 				} else {
-					IRC20(_token).transfer(_to, _amount);
+					isPegged = tokenIndexes[_token]!=0;
+					if (isPegged) {
+						IRC20(_token).mintTo(_to, _amount);
+					} else {
+						IRC20(_token).transfer(_to, _amount);
+					}
 				}
+				exists[_extra] = true;
 			}
 		}
 	}
