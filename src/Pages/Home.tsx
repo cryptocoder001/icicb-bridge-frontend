@@ -312,8 +312,10 @@ const Home = () => {
 						</div>
 						<label className="overlay" htmlFor="asset"></label>
 					</div>
-					{!supported ? (
-						<p style={{color:'red', backgroundColor: '#2b2f36', padding: 10}}>{`We do not support ${L['chain.' + G.targetChain.toLowerCase()]}'s ${G.token} swap now.`}</p>
+					{G.inited ? (
+						!supported ? (
+							<p style={{color:'red', backgroundColor: '#2b2f36', padding: 10}}>{`We do not support ${L['chain.' + G.targetChain.toLowerCase()]}'s ${G.token} swap now.`}</p>
+						) : null
 					) : null}
 					<div className="label" style={{paddingTop:20}}>Amount</div>
 					<div>
