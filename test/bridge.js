@@ -48,9 +48,10 @@ describe("UnitTest for Bridge Contract", () => {
 			[tokens[2], addrs[2].address, amount/* , fromChainId, fromToken, extra */]
 		]);
 		await txTr.wait()
-		const token1 = new ethers.Contract(tokens[0], ['function balanceOf(address) public view returns (uint256)'], owner)
-		const token2 = new ethers.Contract(tokens[1], ['function balanceOf(address) public view returns (uint256)'], owner)
-		const token3 = new ethers.Contract(tokens[2], ['function balanceOf(address) public view returns (uint256)'], owner)
+		const balanceOf = 'function balanceOf(address) public view returns (uint256)'
+		const token1 = new ethers.Contract(tokens[0], [balanceOf], owner)
+		const token2 = new ethers.Contract(tokens[1], [balanceOf], owner)
+		const token3 = new ethers.Contract(tokens[2], [balanceOf], owner)
 		console.log('\taddress1:'.gray + addrs[0].address.blue + ': ', ethers.utils.formatUnits(await token1.balanceOf(addrs[0].address), 18).red + ' ethers'.red)
 		console.log('\taddress2:'.gray + addrs[1].address.blue + ': ', ethers.utils.formatUnits(await token2.balanceOf(addrs[1].address), 18).red + ' ethers'.red)
 		console.log('\taddress3:'.gray + addrs[2].address.blue + ': ', ethers.utils.formatUnits(await token3.balanceOf(addrs[2].address), 18).red + ' ethers'.red)
@@ -62,7 +63,7 @@ describe("UnitTest for Bridge Contract", () => {
 		const txTr = await bridge.connect(addrs[0]).deposit(tokens[0], amount, 1);
 		await txTr.wait()
 
-		const token1 = new ethers.Contract(tokens[0], ['function balanceOf(address) public view returns (uint256)'], owner)
+		const token1 = new ethers.Contract(tokens[0], [balanceOf], owner)
 		const balance = ethers.utils.formatUnits(await token1.balanceOf(addrs[0].address), 18)
 		console.log('\taddress1:'.gray + addrs[0].address.blue + ': ', balance.red + ' ethers'.red)
 		expect(0.5==Number(balance), "correct")

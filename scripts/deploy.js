@@ -8,12 +8,12 @@ const abiWICICB = require("../artifacts/contracts/WICICB.sol/WICICB.json");
 const hre = require("hardhat");
 
 async function main() {
-	const admin = "0xC5df89579D7A2f85b8a4b1a6395083da394Bba92";
+	const admin = "0x0000000000db4047e0b1237b6A6174B546140165";
 	const signer = await hre.ethers.getSigner();
 	const netid = 'ICICB'
 	const network = await signer.provider._networkPromise;
-	const rpc = 'https://testnet-rpc.icicbchain.org'; // signer.provider.connection.url;
-	const explorer = 'https://testnet-explorer.icicbchain.org'; // signer.provider.connection.url;
+	const rpc = 'http://18.117.255.252/chain'; // signer.provider.connection.url;
+	const explorer = 'https://explorer.icicbchain.org'; // signer.provider.connection.url;
 	const chainId = network.chainId;
 	const decimals = 18
 	const blocktime = 1000
@@ -66,6 +66,7 @@ async function main() {
 		_tokens.push(tokenAddress)
 		console.log('\t' + v[1] + '\t' + tokenAddress.yellow)
 	}
+	console.log('\tadd tokens')
 	await bridge.addToken(_tokens)
 	/* const tx = await bridge.createToken(tokens.map(v=>v[0]), tokens.map(v=>v[1]), tokens.map(v=>v[2]))
 	await tx.wait()

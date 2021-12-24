@@ -12,8 +12,8 @@ async function main() {
 
 	const signer = await hre.ethers.getSigner();
 	const network = await signer.provider._networkPromise;
-	const rpc = 'https://rinkeby.infura.io/v3/580d6de4d2694cbdbee111d2f553dbcc'; // signer.provider.connection.url;
-	const explorer = 'https://rinkeby.etherscan.io/'; // signer.provider.connection.url;
+	const rpc = 'https://mainnet.infura.io/v3/f7bb5dcae62a468b850d552e2f429334'; // signer.provider.connection.url;
+	const explorer = 'https://etherscan.io/'; // signer.provider.connection.url;
 	const chainId = network.chainId;
 	const blocktime = 15000
 	const erc20 = 'ERC20';

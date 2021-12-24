@@ -390,9 +390,8 @@ const Home = () => {
 											G.txs[v.key].tx ? (
 												<a className="cmd" href={networks[v.targetChain].explorer + '/tx/' + G.txs[v.key].tx} target="_blank" rel="noreferrer">view result</a>
 											) : (
-												G.txs[v.key].err ? (<code style={{color:'red'}}>error</code>) : (<code style={{color:'#76808f'}}>{G.txs[v.key].confirmations >= networks[v.chain].confirmations ? 'pending…' : G.txs[v.key].confirmations + ' / ' + networks[v.chain].confirmations}</code>
-												)
-											)
+													G.txs[v.key].err ? (<code style={{color:'red'}}>error</code>) : (<code style={{color:'#76808f'}}>{G.txs[v.key].confirmations >= networks[v.chain].confirmations ? 'processing…' : G.txs[v.key].confirmations + ' / ' + networks[v.chain].confirmations}</code>
+											))
 										) : <code style={{color:'#76808f'}}>confirming...</code>
 										}
 									</div>

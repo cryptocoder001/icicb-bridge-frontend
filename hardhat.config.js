@@ -33,16 +33,16 @@ module.exports = {
 		},
 		
 		icicb :{
-			url: "http://3.143.142.135",
+			url: "http://18.117.255.252/chain",
 			accounts: [process.env.PRIVATEKEY]
 		},
 		icicbtestnet :{
-			url: "http://13.58.153.103",
+			url: "http://18.117.255.252/chain",
 			accounts: [process.env.PRIVATEKEY]
 		},
 
 		bsctestnet :{
-			url: "https://ethereum-rpc.icicbchain.org/bsctest/",
+			url: "http://185.25.48.34/api/v10/rpc/bsctest/",
 			accounts: [process.env.PRIVATEKEY]
 		},
 
@@ -51,17 +51,17 @@ module.exports = {
 			accounts: [process.env.PRIVATEKEY]
 		},
 		eth :{
-			url: "https://ethereum-rpc.icicbchain.org",
+			url: "https://mainnet.infura.io/v3/f7bb5dcae62a468b850d552e2f429334",
 			accounts: [process.env.PRIVATEKEY]
 		},
 		
 		ethtest :{
-			url: "https://rinkeby.infura.io/v3/580d6de4d2694cbdbee111d2f553dbcc",
+			url: "https://rinkeby.infura.io/v3/f7bb5dcae62a468b850d552e2f429334",
 			accounts: [process.env.PRIVATEKEY]
 		},
 
 		bsc :{
-			url: "https://bsc-dataseed1.ninicoin.io/",
+			url: "http://185.25.48.34/api/v10/rpc/bsc",
 			accounts: [process.env.PRIVATEKEY]
 		},
 		matic :{

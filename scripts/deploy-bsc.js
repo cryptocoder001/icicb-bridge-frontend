@@ -12,8 +12,8 @@ async function main() {
 
 	const signer = await hre.ethers.getSigner();
 	const network = await signer.provider._networkPromise;
-	const rpc = 'https://ethereum-rpc.icicbchain.org/bsctest/'; // signer.provider.connection.url;
-	const explorer = 'https://testnet.bscscan.com/'; // signer.provider.connection.url;
+	const rpc = 'https://bsc-dataseed.binance.org/'; // signer.provider.connection.url;
+	const explorer = 'https://bscscan.com/'; // signer.provider.connection.url;
 	const chainId = network.chainId;
 	const blocktime = 3000;
 	const erc20 = 'BEP20';

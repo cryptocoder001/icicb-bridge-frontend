@@ -53,7 +53,8 @@
     "deploy_icicbtest": "npx hardhat run --network icicbtestnet scripts/deploy.js",
     "deploy_bsctest": "npx hardhat run --network bsctestnet scripts/deploy-bsc.js",
     "deploy_ethtest": "npx hardhat run --network ethtest scripts/deploy-eth.js",
-    "deploy_testall": "npx hardhat run --network icicbtestnet scripts/deploy.js && npx hardhat run --network ethtest scripts/deploy-eth.js && npx hardhat run --network bsctestnet scripts/deploy-bsc.js && npx hardhat run --network ethtest scripts/deploy-eth_tokens.js && npx hardhat run --network bsctestnet scripts/deploy-bsc_tokens.js"
+    "deploy_testall": "npx hardhat run --network icicbtestnet scripts/deploy.js && npx hardhat run --network ethtest scripts/deploy-eth.js && npx hardhat run --network bsctestnet scripts/deploy-bsc.js && npx hardhat run --network ethtest scripts/deploy-eth_tokens.js && npx hardhat run --network bsctestnet scripts/deploy-bsc_tokens.js",
+    "deploy_all": "npx hardhat run --network eth scripts/deploy-eth.js && npx hardhat run --network bsc scripts/deploy-bsc.js"
   },
   "eslintConfig": {
     "extends": [
